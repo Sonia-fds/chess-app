@@ -965,9 +965,9 @@ class _OAuthButtons extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _OAuthButton(
-            label: 'GitHub',
-            icon: FontAwesomeIcons.github,
-            iconColor: AppColors.textPrimary,
+            label: 'Apple',
+            icon: FontAwesomeIcons.apple,
+            iconColor: const Color.fromARGB(15, 0, 0, 0),
             onPressed: () {},
           ),
         ),
