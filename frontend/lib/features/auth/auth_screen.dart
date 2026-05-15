@@ -1027,18 +1027,17 @@ class _OAuthButtons extends StatelessWidget {
       children: [
         Expanded(
           child: _OAuthButton(
-            label: 'Google',
-            icon: FontAwesomeIcons.google,
-            iconColor: const Color(0xFF4285F4),
+            label: 'Google', 
+            assetIconPath: 'assets/icons/google.png',
             onPressed: () {},
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: _OAuthButton(
-            label: 'GitHub',
-            icon: FontAwesomeIcons.github,
-            iconColor: AppColors.textPrimary,
+            label: 'Apple',
+            icon: FontAwesomeIcons.apple,
+            iconColor: const Color(0xFF000000),
             onPressed: () {},
           ),
         ),
@@ -1049,19 +1048,21 @@ class _OAuthButtons extends StatelessWidget {
 
 class _OAuthButton extends StatelessWidget {
   final String label;
-  final FaIconData icon;
-  final Color iconColor;
+  final String? assetIconPath;
+  final FaIconData? icon;
+  final Color? iconColor;
   final VoidCallback onPressed;
 
   const _OAuthButton({
     required this.label,
-    required this.icon,
-    required this.iconColor,
     required this.onPressed,
+    this.assetIconPath,
+    this.icon,
+    this.iconColor,
   });
 
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
@@ -1075,11 +1076,19 @@ class _OAuthButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FaIcon(
-            icon,
-            size: 17,
-            color: iconColor,
-          ),
+          if (assetIconPath != null)
+            Image.asset(
+              assetIconPath!,
+              width: 18,
+              height: 18,
+              fit: BoxFit.contain,
+            )
+          else if (icon != null)
+            FaIcon(
+              icon,
+              size: 18,
+              color: iconColor ?? AppColors.textPrimary,
+            ),
           const SizedBox(width: 9),
           Text(
             label,
