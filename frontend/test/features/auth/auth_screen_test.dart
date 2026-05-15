@@ -133,11 +133,11 @@ void main() {
     });
 
     group('UI — boutons OAuth', () {
-      testWidgets('affiche les boutons Google et GitHub', (tester) async {
+      testWidgets('affiche les boutons Google et Apple', (tester) async {
         await pumpAuthScreen(tester);
 
         expect(find.text('Google'), findsOneWidget);
-        expect(find.text('GitHub'), findsOneWidget);
+        expect(find.text('Apple'), findsOneWidget);
       });
     });
 
