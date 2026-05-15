@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'dart:math' as math;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 void main() {
   runApp(const ChessApp());
 }
@@ -156,29 +157,37 @@ class _AuthScreenState extends State<AuthScreen>
             // Fond échiquier décoratif
             const _ChessboardBackground(),
             // Contenu
-            SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 32,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo
-                      const _AppLogo(),
-                      const SizedBox(height: 40),
-                      // Carte principale
-                      _AuthCard(
-                        mode: _mode,
-                        fadeAnim: _fadeAnim,
-                        slideAnim: _slideAnim,
-                        onSwitchMode: _switchMode,
+             SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final contentWidth = math.min(
+                    440.0,
+                    math.max(320.0, constraints.maxWidth - 32.0),
+                  );
+
+                  return Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: contentWidth,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _AppLogo(compact: _mode == AuthMode.register),
+                            SizedBox(height: _mode == AuthMode.register ? 20 : 32),
+                            _AuthCard(
+                              mode: _mode,
+                              fadeAnim: _fadeAnim,
+                              slideAnim: _slideAnim,
+                              onSwitchMode: _switchMode,
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -258,18 +267,24 @@ class _ChessPatternPainter extends CustomPainter {
 // ─────────────────────────────────────────────
 
 class _AppLogo extends StatelessWidget {
-  const _AppLogo();
+  final bool compact;
+
+  const _AppLogo({this.compact = false});
 
   @override
   Widget build(BuildContext context) {
+    final logoSize = compact ? 54.0 : 72.0;
+    final logoIconSize = compact ? 30.0 : 38.0;
+    final titleSize = compact ? 18.0 : 22.0;
+
     return Column(
       children: [
         Container(
-          width: 72,
-          height: 72,
+          width: logoSize,
+          height: logoSize,
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(compact ? 16 : 20),
             border: Border.all(color: AppColors.goldDim, width: 1),
             boxShadow: [
               BoxShadow(
@@ -279,19 +294,22 @@ class _AppLogo extends StatelessWidget {
               ),
             ],
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '♛',
-              style: TextStyle(fontSize: 38, color: AppColors.gold),
+              style: TextStyle(
+                fontSize: logoIconSize,
+                color: AppColors.gold,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
+        SizedBox(height: compact ? 10 : 16),
+        Text(
           'CHESS APP',
           style: TextStyle(
             color: AppColors.textPrimary,
-            fontSize: 22,
+            fontSize: titleSize,
             fontWeight: FontWeight.w700,
             letterSpacing: 6,
           ),
@@ -1010,7 +1028,8 @@ class _OAuthButtons extends StatelessWidget {
         Expanded(
           child: _OAuthButton(
             label: 'Google',
-            icon: '🌐',
+            icon: FontAwesomeIcons.google,
+            iconColor: const Color(0xFF4285F4),
             onPressed: () {},
           ),
         ),
@@ -1018,7 +1037,8 @@ class _OAuthButtons extends StatelessWidget {
         Expanded(
           child: _OAuthButton(
             label: 'GitHub',
-            icon: '🐙',
+            icon: FontAwesomeIcons.github,
+            iconColor: AppColors.textPrimary,
             onPressed: () {},
           ),
         ),
@@ -1029,12 +1049,14 @@ class _OAuthButtons extends StatelessWidget {
 
 class _OAuthButton extends StatelessWidget {
   final String label;
-  final String icon;
+  final FaIconData icon;
+  final Color iconColor;
   final VoidCallback onPressed;
 
   const _OAuthButton({
     required this.label,
     required this.icon,
+    required this.iconColor,
     required this.onPressed,
   });
 
@@ -1053,8 +1075,12 @@ class _OAuthButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
+          FaIcon(
+            icon,
+            size: 17,
+            color: iconColor,
+          ),
+          const SizedBox(width: 9),
           Text(
             label,
             style: const TextStyle(

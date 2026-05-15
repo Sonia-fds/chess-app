@@ -1,0 +1,42 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]   # déclenché seulement sur main
+
+jobs:
+  deploy-backend:
+    name: Deploy FastAPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Railway / Render
+        env:
+          DEPLOY_HOOK: ${{ secrets.BACKEND_DEPLOY_HOOK }}
+        run: curl -X POST "$DEPLOY_HOOK"
+
+  deploy-frontend:
+    name: Deploy Flutter Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Build Flutter Web
+        working-directory: frontend
+        run: flutter build web --release
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          entryPoint: frontend
