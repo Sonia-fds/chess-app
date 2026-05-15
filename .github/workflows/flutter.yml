@@ -6,6 +6,7 @@ on:
     paths:
       - "frontend/**"
       - ".github/workflows/flutter.yml"
+
   pull_request:
     branches: [main]
     paths:
@@ -31,7 +32,7 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Flutter version
+      - name: Show Flutter version
         run: flutter --version
 
       - name: Install dependencies
