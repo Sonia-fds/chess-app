@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
+  chess: ^0.8.1          # logique des règles échecs
+  simple_chess_board: ^0.10.0
   
 
   # The following adds the Cupertino Icons font to your application.
