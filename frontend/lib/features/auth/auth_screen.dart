@@ -967,10 +967,11 @@ class _OAuthButtons extends StatelessWidget {
           child: _OAuthButton(
             label: 'Apple',
             icon: FontAwesomeIcons.apple,
-            iconColor: const Color.fromARGB(15, 0, 0, 0),
+            iconColor: const Color.fromRGBO(0, 0, 0, 1),
             onPressed: () {},
           ),
         ),
+        
       ],
     );
   }
