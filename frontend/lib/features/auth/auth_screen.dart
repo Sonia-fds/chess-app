@@ -1,63 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math' as math;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-void main() {
-  runApp(const ChessApp());
-}
 
-// ─────────────────────────────────────────────
-// APP ROOT
-// ─────────────────────────────────────────────
-
-class ChessApp extends StatelessWidget {
-  const ChessApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chess App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: AppColors.background,
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.gold,
-          surface: AppColors.surface,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: AppColors.inputFill,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.gold, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.error),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-          ),
-          labelStyle: const TextStyle(color: AppColors.textSecondary),
-          hintStyle: const TextStyle(color: AppColors.textHint),
-          prefixIconColor: AppColors.textSecondary,
-          suffixIconColor: AppColors.textSecondary,
-          errorStyle: const TextStyle(color: AppColors.error, fontSize: 12),
-        ),
-      ),
-      home: const AuthScreen(),
-    );
-  }
-}
+import '../../core/utils/validators.dart';
 
 // ─────────────────────────────────────────────
 // COLORS
@@ -127,10 +74,12 @@ class _AuthScreenState extends State<AuthScreen>
     _slideAnim = Tween<Offset>(
       begin: const Offset(0, 0.06),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: Curves.easeOut,
+      ),
+    );
     _animController.forward();
   }
 
@@ -154,10 +103,8 @@ class _AuthScreenState extends State<AuthScreen>
       child: Scaffold(
         body: Stack(
           children: [
-            // Fond échiquier décoratif
             const _ChessboardBackground(),
-            // Contenu
-             SafeArea(
+            SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final contentWidth = math.min(
@@ -175,7 +122,9 @@ class _AuthScreenState extends State<AuthScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             _AppLogo(compact: _mode == AuthMode.register),
-                            SizedBox(height: _mode == AuthMode.register ? 20 : 32),
+                            SizedBox(
+                              height: _mode == AuthMode.register ? 20.0 : 32.0,
+                            ),
                             _AuthCard(
                               mode: _mode,
                               fadeAnim: _fadeAnim,
@@ -221,7 +170,6 @@ class _ChessPatternPainter extends CustomPainter {
     final lightPaint = Paint()..color = const Color(0xFF141416);
     final darkPaint = Paint()..color = const Color(0xFF111113);
 
-    // Gradient overlay
     final gradientPaint = Paint()
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
@@ -233,11 +181,11 @@ class _ChessPatternPainter extends CustomPainter {
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    int cols = (size.width / tileSize).ceil() + 1;
-    int rows = (size.height / tileSize).ceil() + 1;
+    final cols = (size.width / tileSize).ceil() + 1;
+    final rows = (size.height / tileSize).ceil() + 1;
 
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < cols; col++) {
+    for (var row = 0; row < rows; row++) {
+      for (var col = 0; col < cols; col++) {
         final isLight = (row + col) % 2 == 0;
         canvas.drawRect(
           Rect.fromLTWH(
@@ -251,7 +199,6 @@ class _ChessPatternPainter extends CustomPainter {
       }
     }
 
-    // Overlay gradient
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
       gradientPaint,
@@ -304,7 +251,7 @@ class _AppLogo extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: compact ? 10 : 16),
+        SizedBox(height: compact ? 10.0 : 16.0),
         Text(
           'CHESS APP',
           style: TextStyle(
@@ -364,9 +311,7 @@ class _AuthCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Tabs
           _AuthTabs(mode: mode, onSwitchMode: onSwitchMode),
-          // Formulaire animé
           FadeTransition(
             opacity: fadeAnim,
             child: SlideTransition(
@@ -461,8 +406,7 @@ class _Tab extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: selected ? AppColors.gold : AppColors.textSecondary,
-              fontWeight:
-                  selected ? FontWeight.w600 : FontWeight.w400,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
               fontSize: 14,
               letterSpacing: 0.5,
             ),
@@ -503,12 +447,10 @@ class _LoginFormState extends State<_LoginForm> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    // Simuler appel API
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
       setState(() => _isLoading = false);
-      // Navigation vers l'accueil ici
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Connexion réussie !'),
@@ -526,8 +468,7 @@ class _LoginFormState extends State<_LoginForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          // Email
-          _FieldLabel(label: 'Adresse email'),
+          const _FieldLabel(label: 'Adresse email'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _emailController,
@@ -538,17 +479,10 @@ class _LoginFormState extends State<_LoginForm> {
               hintText: 'vous@exemple.com',
               prefixIcon: Icon(Icons.mail_outline_rounded),
             ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Email requis';
-              if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(v)) {
-                return 'Email invalide';
-              }
-              return null;
-            },
+            validator: AuthValidators.email,
           ),
           const SizedBox(height: 20),
-          // Mot de passe
-          _FieldLabel(label: 'Mot de passe'),
+          const _FieldLabel(label: 'Mot de passe'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _passwordController,
@@ -569,14 +503,9 @@ class _LoginFormState extends State<_LoginForm> {
                     setState(() => _obscurePassword = !_obscurePassword),
               ),
             ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Mot de passe requis';
-              if (v.length < 6) return 'Minimum 6 caractères';
-              return null;
-            },
+            validator: AuthValidators.password,
           ),
           const SizedBox(height: 12),
-          // Se souvenir de moi + Mot de passe oublié
           Row(
             children: [
               GestureDetector(
@@ -614,7 +543,6 @@ class _LoginFormState extends State<_LoginForm> {
             ],
           ),
           const SizedBox(height: 28),
-          // Bouton connexion
           _SubmitButton(
             label: 'Se connecter',
             icon: Icons.login_rounded,
@@ -622,10 +550,8 @@ class _LoginFormState extends State<_LoginForm> {
             onPressed: _submit,
           ),
           const SizedBox(height: 24),
-          // Séparateur
           const _Divider(label: 'ou continuer avec'),
           const SizedBox(height: 20),
-          // OAuth
           const _OAuthButtons(),
         ],
       ),
@@ -677,16 +603,14 @@ class _RegisterFormState extends State<_RegisterForm> {
   }
 
   void _updatePasswordStrength(String password) {
-    double strength = 0;
-    if (password.length >= 8) strength += 0.25;
-    if (password.contains(RegExp(r'[A-Z]'))) strength += 0.25;
-    if (password.contains(RegExp(r'[0-9]'))) strength += 0.25;
-    if (password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) strength += 0.25;
-    setState(() => _passwordStrength = strength);
+    setState(() {
+      _passwordStrength = AuthValidators.passwordStrength(password);
+    });
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
     if (!_acceptTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -696,8 +620,10 @@ class _RegisterFormState extends State<_RegisterForm> {
       );
       return;
     }
+
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
+
     if (mounted) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -717,8 +643,7 @@ class _RegisterFormState extends State<_RegisterForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          // Email
-          _FieldLabel(label: 'Adresse email'),
+          const _FieldLabel(label: 'Adresse email'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _emailController,
@@ -729,39 +654,23 @@ class _RegisterFormState extends State<_RegisterForm> {
               hintText: 'vous@exemple.com',
               prefixIcon: Icon(Icons.mail_outline_rounded),
             ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Email requis';
-              if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(v)) {
-                return 'Email invalide';
-              }
-              return null;
-            },
+            validator: AuthValidators.email,
           ),
           const SizedBox(height: 20),
-          // Pseudo
-          _FieldLabel(label: 'Pseudo'),
+          const _FieldLabel(label: 'Pseudo'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _usernameController,
             textInputAction: TextInputAction.next,
             style: const TextStyle(color: AppColors.textPrimary),
             decoration: const InputDecoration(
-              hintText: 'GrandMaître42',
+              hintText: 'GrandMaitre42',
               prefixIcon: Icon(Icons.person_outline_rounded),
             ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Pseudo requis';
-              if (v.length < 3) return 'Minimum 3 caractères';
-              if (v.length > 20) return 'Maximum 20 caractères';
-              if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(v)) {
-                return 'Lettres, chiffres et _ uniquement';
-              }
-              return null;
-            },
+            validator: AuthValidators.username,
           ),
           const SizedBox(height: 20),
-          // Mot de passe
-          _FieldLabel(label: 'Mot de passe'),
+          const _FieldLabel(label: 'Mot de passe'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _passwordController,
@@ -782,20 +691,14 @@ class _RegisterFormState extends State<_RegisterForm> {
                     setState(() => _obscurePassword = !_obscurePassword),
               ),
             ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Mot de passe requis';
-              if (v.length < 8) return 'Minimum 8 caractères';
-              return null;
-            },
+            validator: AuthValidators.password,
           ),
-          // Indicateur de force
           if (_passwordController.text.isNotEmpty) ...[
             const SizedBox(height: 10),
             _PasswordStrengthIndicator(strength: _passwordStrength),
           ],
           const SizedBox(height: 20),
-          // Confirmation
-          _FieldLabel(label: 'Confirmer le mot de passe'),
+          const _FieldLabel(label: 'Confirmer le mot de passe'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _confirmController,
@@ -816,16 +719,9 @@ class _RegisterFormState extends State<_RegisterForm> {
                     setState(() => _obscureConfirm = !_obscureConfirm),
               ),
             ),
-            validator: (v) {
-              if (v == null || v.isEmpty) return 'Confirmation requise';
-              if (v != _passwordController.text) {
-                return 'Les mots de passe ne correspondent pas';
-              }
-              return null;
-            },
+            validator: AuthValidators.confirmPassword(_passwordController.text),
           ),
           const SizedBox(height: 20),
-          // Conditions
           GestureDetector(
             onTap: () => setState(() => _acceptTerms = !_acceptTerms),
             child: Row(
@@ -850,9 +746,9 @@ class _RegisterFormState extends State<_RegisterForm> {
                             decoration: TextDecoration.underline,
                           ),
                         ),
-                        TextSpan(text: " et la "),
+                        TextSpan(text: ' et la '),
                         TextSpan(
-                          text: "politique de confidentialité",
+                          text: 'politique de confidentialité',
                           style: TextStyle(
                             color: AppColors.gold,
                             decoration: TextDecoration.underline,
@@ -866,9 +762,8 @@ class _RegisterFormState extends State<_RegisterForm> {
             ),
           ),
           const SizedBox(height: 28),
-          // Bouton inscription
           _SubmitButton(
-            label: "Créer mon compte",
+            label: 'Créer mon compte',
             icon: Icons.person_add_rounded,
             isLoading: _isLoading,
             onPressed: _submit,
@@ -889,6 +784,7 @@ class _RegisterFormState extends State<_RegisterForm> {
 
 class _FieldLabel extends StatelessWidget {
   final String label;
+
   const _FieldLabel({required this.label});
 
   @override
@@ -907,6 +803,7 @@ class _FieldLabel extends StatelessWidget {
 
 class _Checkbox extends StatelessWidget {
   final bool value;
+
   const _Checkbox({required this.value});
 
   @override
@@ -995,6 +892,7 @@ class _SubmitButton extends StatelessWidget {
 
 class _Divider extends StatelessWidget {
   final String label;
+
   const _Divider({required this.label});
 
   @override
@@ -1027,7 +925,7 @@ class _OAuthButtons extends StatelessWidget {
       children: [
         Expanded(
           child: _OAuthButton(
-            label: 'Google', 
+            label: 'Google',
             assetIconPath: 'assets/icons/google.png',
             onPressed: () {},
           ),
@@ -1035,9 +933,9 @@ class _OAuthButtons extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _OAuthButton(
-            label: 'Apple',
-            icon: FontAwesomeIcons.apple,
-            iconColor: const Color(0xFF000000),
+            label: 'GitHub',
+            icon: FontAwesomeIcons.github,
+            iconColor: AppColors.textPrimary,
             onPressed: () {},
           ),
         ),
@@ -1062,7 +960,7 @@ class _OAuthButton extends StatelessWidget {
   });
 
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
@@ -1109,6 +1007,7 @@ class _OAuthButton extends StatelessWidget {
 
 class _PasswordStrengthIndicator extends StatelessWidget {
   final double strength;
+
   const _PasswordStrengthIndicator({required this.strength});
 
   Color get _color {
@@ -1142,9 +1041,9 @@ class _PasswordStrengthIndicator extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: [
-            Text(
+            const Text(
               'Force : ',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textHint,
                 fontSize: 11,
               ),
@@ -1170,7 +1069,7 @@ class _PasswordStrengthIndicator extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// MOT DE PASSE OUBLIÉ (Bottom Sheet)
+// MOT DE PASSE OUBLIÉ
 // ─────────────────────────────────────────────
 
 class _ForgotPasswordSheet extends StatefulWidget {
@@ -1194,26 +1093,35 @@ class _ForgotPasswordSheetState extends State<_ForgotPasswordSheet> {
 
   Future<void> _send() async {
     if (!_formKey.currentState!.validate()) return;
+
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
-    if (mounted) setState(() { _isLoading = false; _sent = true; });
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _sent = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        24, 20, 24,
+        24,
+        20,
+        24,
         MediaQuery.of(context).viewInsets.bottom + 32,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Handle
           Center(
             child: Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
@@ -1233,7 +1141,7 @@ class _ForgotPasswordSheetState extends State<_ForgotPasswordSheet> {
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: _sent
-                ? _SentConfirmation(key: const ValueKey('sent'))
+                ? const _SentConfirmation(key: ValueKey('sent'))
                 : Form(
                     key: _formKey,
                     child: Column(
@@ -1256,13 +1164,7 @@ class _ForgotPasswordSheetState extends State<_ForgotPasswordSheet> {
                             hintText: 'vous@exemple.com',
                             prefixIcon: Icon(Icons.mail_outline_rounded),
                           ),
-                          validator: (v) {
-                            if (v == null || v.isEmpty) return 'Email requis';
-                            if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(v)) {
-                              return 'Email invalide';
-                            }
-                            return null;
-                          },
+                          validator: AuthValidators.email,
                         ),
                         const SizedBox(height: 20),
                         _SubmitButton(
@@ -1289,7 +1191,8 @@ class _SentConfirmation extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 60, height: 60,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
             color: AppColors.success.withOpacity(0.15),
             shape: BoxShape.circle,
