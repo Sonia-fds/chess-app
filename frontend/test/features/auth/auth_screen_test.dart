@@ -11,14 +11,25 @@ Widget makeTestable(Widget widget) {
 }
 
 Future<void> pumpAuthScreen(WidgetTester tester) async {
+  await tester.binding.setSurfaceSize(const Size(1200, 1000));
+
   await tester.pumpWidget(makeTestable(const AuthScreen()));
+  await tester.pumpAndSettle();
+}
+
+Future<void> tapText(WidgetTester tester, String text) async {
+  final finder = find.text(text);
+  expect(finder, findsAtLeastNWidgets(1));
+
+  final target = finder.last;
+  await tester.ensureVisible(target);
+  await tester.tap(target);
   await tester.pumpAndSettle();
 }
 
 Future<void> goToRegister(WidgetTester tester) async {
   await pumpAuthScreen(tester);
-  await tester.tap(find.text('Inscription'));
-  await tester.pumpAndSettle();
+  await tapText(tester, 'Inscription');
 }
 
 void main() {
@@ -39,8 +50,7 @@ void main() {
     testWidgets('bascule vers le formulaire d inscription au tap', (tester) async {
       await pumpAuthScreen(tester);
 
-      await tester.tap(find.text('Inscription'));
-      await tester.pumpAndSettle();
+      await tapText(tester, 'Inscription');
 
       expect(find.byType(TextFormField), findsNWidgets(4));
     });
@@ -48,11 +58,9 @@ void main() {
     testWidgets('rebascule vers connexion au tap sur l onglet', (tester) async {
       await pumpAuthScreen(tester);
 
-      await tester.tap(find.text('Inscription'));
-      await tester.pumpAndSettle();
+      await tapText(tester, 'Inscription');
 
-      await tester.tap(find.text('Connexion'));
-      await tester.pumpAndSettle();
+      await tapText(tester, 'Connexion');
 
       expect(find.byType(TextFormField), findsNWidgets(2));
     });
@@ -66,8 +74,7 @@ void main() {
       testWidgets('affiche les erreurs si soumis vide', (tester) async {
         await pumpAuthScreen(tester);
 
-        await tester.tap(find.text('Se connecter'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Se connecter');
 
         expect(find.text('Email requis'), findsOneWidget);
         expect(find.text('Mot de passe requis'), findsOneWidget);
@@ -82,8 +89,7 @@ void main() {
           find.byType(TextFormField).at(0),
           'email-invalide',
         );
-        await tester.tap(find.text('Se connecter'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Se connecter');
 
         expect(find.text('Email invalide'), findsOneWidget);
       });
@@ -95,8 +101,7 @@ void main() {
           find.byType(TextFormField).at(0),
           'user@example.com',
         );
-        await tester.tap(find.text('Se connecter'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Se connecter');
 
         expect(find.text('Email invalide'), findsNothing);
         expect(find.text('Email requis'), findsNothing);
@@ -108,8 +113,7 @@ void main() {
         await pumpAuthScreen(tester);
 
         await tester.enterText(find.byType(TextFormField).at(1), 'abc');
-        await tester.tap(find.text('Se connecter'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Se connecter');
 
         expect(find.text('Minimum 8 caractères'), findsOneWidget);
       });
@@ -141,8 +145,7 @@ void main() {
       testWidgets('ouvre le bottom sheet au tap', (tester) async {
         await pumpAuthScreen(tester);
 
-        await tester.tap(find.text('Mot de passe oublié ?'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Mot de passe oublié ?');
 
         expect(find.text('Mot de passe oublié'), findsOneWidget);
         expect(find.text('Envoyer le lien'), findsOneWidget);
@@ -151,11 +154,9 @@ void main() {
       testWidgets('affiche erreur si email vide dans bottom sheet', (tester) async {
         await pumpAuthScreen(tester);
 
-        await tester.tap(find.text('Mot de passe oublié ?'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Mot de passe oublié ?');
 
-        await tester.tap(find.text('Envoyer le lien'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Envoyer le lien');
 
         expect(find.text('Email requis'), findsOneWidget);
       });
@@ -170,8 +171,7 @@ void main() {
       testWidgets('affiche toutes les erreurs si soumis vide', (tester) async {
         await goToRegister(tester);
 
-        await tester.tap(find.text('Créer mon compte'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Créer mon compte');
 
         expect(find.text('Email requis'), findsOneWidget);
         expect(find.text('Pseudo requis'), findsOneWidget);
@@ -185,8 +185,7 @@ void main() {
         await goToRegister(tester);
 
         await tester.enterText(find.byType(TextFormField).at(1), 'ab');
-        await tester.tap(find.text('Créer mon compte'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Créer mon compte');
 
         expect(find.text('Minimum 3 caractères'), findsOneWidget);
       });
@@ -195,8 +194,7 @@ void main() {
         await goToRegister(tester);
 
         await tester.enterText(find.byType(TextFormField).at(1), 'user!');
-        await tester.tap(find.text('Créer mon compte'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Créer mon compte');
 
         expect(
           find.text('Lettres, chiffres et _ uniquement'),
@@ -208,8 +206,7 @@ void main() {
         await goToRegister(tester);
 
         await tester.enterText(find.byType(TextFormField).at(1), 'GrandMaitre42');
-        await tester.tap(find.text('Créer mon compte'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Créer mon compte');
 
         expect(find.text('Pseudo requis'), findsNothing);
         expect(find.text('Minimum 3 caractères'), findsNothing);
@@ -224,8 +221,7 @@ void main() {
 
         await tester.enterText(find.byType(TextFormField).at(2), 'Password1!');
         await tester.enterText(find.byType(TextFormField).at(3), 'AutreMotDePasse');
-        await tester.tap(find.text('Créer mon compte'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Créer mon compte');
 
         expect(
           find.text('Les mots de passe ne correspondent pas'),
@@ -238,8 +234,7 @@ void main() {
 
         await tester.enterText(find.byType(TextFormField).at(2), 'Password1!');
         await tester.enterText(find.byType(TextFormField).at(3), 'Password1!');
-        await tester.tap(find.text('Créer mon compte'));
-        await tester.pumpAndSettle();
+        await tapText(tester, 'Créer mon compte');
 
         expect(
           find.text('Les mots de passe ne correspondent pas'),
@@ -291,8 +286,10 @@ void main() {
         await tester.enterText(find.byType(TextFormField).at(2), 'Password1!');
         await tester.enterText(find.byType(TextFormField).at(3), 'Password1!');
 
+        await tester.ensureVisible(find.text('Créer mon compte'));
         await tester.tap(find.text('Créer mon compte'));
         await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
 
         expect(
           find.text("Veuillez accepter les conditions d'utilisation"),

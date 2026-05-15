@@ -235,7 +235,7 @@ class _AppLogo extends StatelessWidget {
             border: Border.all(color: AppColors.goldDim, width: 1),
             boxShadow: [
               BoxShadow(
-                color: AppColors.gold.withOpacity(0.15),
+                color: AppColors.gold.withValues(alpha: 0.15),
                 blurRadius: 24,
                 spreadRadius: 2,
               ),
@@ -303,7 +303,7 @@ class _AuthCard extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withValues(alpha: 0.4),
             blurRadius: 40,
             offset: const Offset(0, 16),
           ),
@@ -506,42 +506,74 @@ class _LoginFormState extends State<_LoginForm> {
             validator: AuthValidators.password,
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => setState(() => _rememberMe = !_rememberMe),
-                child: Row(
-                  children: [
-                    _Checkbox(value: _rememberMe),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Se souvenir',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13,
+           Wrap(
+              spacing: 16,
+              runSpacing: 10,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () => setState(() => _rememberMe = !_rememberMe),
+                  child: Wrap(
+                    spacing: 16,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() => _rememberMe = !_rememberMe),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _Checkbox(value: _rememberMe),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Se souvenir',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () => _showForgotPassword(context),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: const Text(
-                  'Mot de passe oublié ?',
-                  style: TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 13,
+                      TextButton(
+                        onPressed: () => _showForgotPassword(context),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          'Mot de passe oublié ?',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.gold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
+                TextButton(
+                  onPressed: () => _showForgotPassword(context),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(
+                    'Mot de passe oublié ?',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AppColors.gold,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           const SizedBox(height: 28),
           _SubmitButton(
             label: 'Se connecter',
@@ -1039,27 +1071,38 @@ class _PasswordStrengthIndicator extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Row(
+         Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          alignment: WrapAlignment.spaceBetween,
           children: [
-            const Text(
-              'Force : ',
-              style: TextStyle(
-                color: AppColors.textHint,
-                fontSize: 11,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Force : ',
+                  style: TextStyle(
+                    color: AppColors.textHint,
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  _label,
+                  style: TextStyle(
+                    color: _color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              _label,
-              style: TextStyle(
-                color: _color,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const Spacer(),
             const Text(
               '8+ car. · Maj. · Chiffre · Symbole',
-              style: TextStyle(color: AppColors.textHint, fontSize: 10),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: AppColors.textHint,
+                fontSize: 10,
+              ),
             ),
           ],
         ),
@@ -1194,7 +1237,7 @@ class _SentConfirmation extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.15),
+            color: AppColors.success.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: const Icon(
