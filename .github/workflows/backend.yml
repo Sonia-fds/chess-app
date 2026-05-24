@@ -1,0 +1,50 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths: [backend/**]
+  pull_request:
+    branches: [main]
+    paths: [backend/**]
+
+jobs:
+  test:
+    name: Test FastAPI
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: chess
+          POSTGRES_PASSWORD: chess123
+          POSTGRES_DB: chessdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Stockfish
+        run: sudo apt-get install -y stockfish
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx
+
+      - name: Run tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://chess:chess123@localhost/chessdb
+        run: pytest tests/ -v --tb=short
